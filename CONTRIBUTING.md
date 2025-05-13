@@ -39,5 +39,10 @@ style: 코드 포맷팅 (기능 변경 없음)
 예) feat:[구재회] 데이터셋 csv load 기능 축가
 
 ## 2. 라이브러리 관리
+
+### 라이브러리 설치 및 requirements.txt 업데이트
 pip install <package-name>
 pip freeze > requirements.txt
+
+### 의존 라이브러리 설치
+pip install -r requirements.txt
