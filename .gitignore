@@ -104,3 +104,13 @@ $RECYCLE.BIN/
 
 # Streamlit
 .streamlit/config.toml
+
+
+# 데이터파일
+notebooks/assessments.csv
+notebooks/courses.csv
+notebooks/studentAssessment.csv
+notebooks/studentInfo.csv
+notebooks/studentRegistration.csv
+notebooks/studentVle.csv
+notebooks/vle.csv
