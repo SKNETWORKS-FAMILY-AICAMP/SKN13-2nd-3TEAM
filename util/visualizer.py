@@ -17,6 +17,24 @@ __version__ = 1.1
 # 📊 모델 평가 지표 시각화 함수
 ######################################
 
+def plot_model_performance_comparison(results_df, figsize=(10, 6)):
+    fig, ax = plt.subplots(figsize=figsize)
+    bars = ax.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
+    ax.set_xlabel('Accuracy')
+    ax.set_title('Model Performance Comparison')
+    ax.set_xlim(0, 1.0)
+
+    # 정확도 값 표시
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + 0.01, bar.get_y() + bar.get_height()/2, f'{width:.3f}', 
+                ha='left', va='center')
+
+    plt.tight_layout()
+    plt.show()
+    return fig
+
+
 def plot_confusion_matrix(y_true, y_pred, title=None):
     cm = confusion_matrix(y_true, y_pred)
     fig, ax = plt.subplots()

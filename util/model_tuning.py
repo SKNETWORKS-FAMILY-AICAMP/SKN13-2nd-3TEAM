@@ -5,6 +5,7 @@ from sklearn.metrics import classification_report, confusion_matrix, ConfusionMa
 import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 import time
+from util.visualizer import plot_confusion_matrix, plot_model_performance_comparison
 
 # 분류 모델 import
 from sklearn.tree import DecisionTreeClassifier
@@ -80,20 +81,21 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
     print(results_df.to_string(index=False))
 
     # 5. 시각화
-    plt.figure(figsize=(10, 6))
-    bars = plt.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
-    plt.xlabel('Accuracy')
-    plt.title('Model Performance Comparison')
-    plt.xlim(0, 1.0)
+    # plt.figure(figsize=(10, 6))
+    # bars = plt.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
+    # plt.xlabel('Accuracy')
+    # plt.title('Model Performance Comparison')
+    # plt.xlim(0, 1.0)
 
-    # 정확도 값 표시
-    for bar in bars:
-        width = bar.get_width()
-        plt.text(width + 0.01, bar.get_y() + bar.get_height()/2, f'{width:.3f}', 
-                ha='left', va='center')
+    # # 정확도 값 표시
+    # for bar in bars:
+    #     width = bar.get_width()
+    #     plt.text(width + 0.01, bar.get_y() + bar.get_height()/2, f'{width:.3f}', 
+    #             ha='left', va='center')
 
-    plt.tight_layout()
-    plt.show()
+    # plt.tight_layout()
+    # plt.show()
+    plot_model_performance_comparison(results_df)
 
     # 6. 성능 리포트 출력
     for model_name, estimator in best_estimators.items():
@@ -102,10 +104,6 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
         print(classification_report(y_test, y_pred))
 
         # 혼동 행렬 시각화
-        cm = confusion_matrix(y_test, y_pred)
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=estimator.classes_)
-        disp.plot(cmap='Blues')
-        plt.title(f'Confusion Matrix - {model_name}')
-        plt.show()
+        plot_confusion_matrix(y_test, y_pred, title=model_name)
         
     return results_df, best_estimators
