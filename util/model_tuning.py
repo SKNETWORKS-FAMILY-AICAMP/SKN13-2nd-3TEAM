@@ -81,20 +81,6 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
     print(results_df.to_string(index=False))
 
     # 5. 시각화
-    # plt.figure(figsize=(10, 6))
-    # bars = plt.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
-    # plt.xlabel('Accuracy')
-    # plt.title('Model Performance Comparison')
-    # plt.xlim(0, 1.0)
-
-    # # 정확도 값 표시
-    # for bar in bars:
-    #     width = bar.get_width()
-    #     plt.text(width + 0.01, bar.get_y() + bar.get_height()/2, f'{width:.3f}', 
-    #             ha='left', va='center')
-
-    # plt.tight_layout()
-    # plt.show()
     plot_model_performance_comparison(results_df)
 
     # 6. 성능 리포트 출력
