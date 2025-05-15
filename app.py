@@ -1,6 +1,7 @@
 # app.py (🏠 대시보드 홈 전용)
 import streamlit as st
 import pandas as pd
+from util.data_preprocessing import preprocess_data
 
 # ---------------------- 페이지 설정 ----------------------
 st.set_page_config(page_title="MOOC 이탈률 예측 대시보드", layout="wide")
@@ -32,7 +33,7 @@ with st.expander("📌 프로젝트 소개", expanded=True):
     """)
 
 with st.expander("📊 데이터 소개", expanded=True):
-    st.dataframe(dummy_data, use_container_width=True)
+    st.dataframe(preprocess_data(), use_container_width=True)
 
 with st.expander("⚙️ 예측 모델 개요 (사용한 알고리즘, 주요 변수 등)", expanded=True):
     st.markdown("""

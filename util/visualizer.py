@@ -17,6 +17,28 @@ __version__ = 1.1
 # 📊 모델 평가 지표 시각화 함수
 ######################################
 
+def plot_model_performance_comparison(results_df, figsize=(10, 6)):
+    """
+    모델 성능 비교 히트맵을 생성하고 fig 객체를 반환합니다.
+    """
+
+    fig, ax = plt.subplots(figsize=figsize)
+    bars = ax.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
+    ax.set_xlabel('Test Accuracy')
+    ax.set_title('Model Performance Comparison')
+    ax.set_xlim(0, 1.0)
+
+    # 정확도 값 표시
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + 0.01, bar.get_y() + bar.get_height()/2, f'{width:.3f}', 
+                ha='left', va='center')
+
+    plt.tight_layout()
+    plt.show()
+    return fig
+
+
 def plot_confusion_matrix(y_true, y_pred, title=None):
     cm = confusion_matrix(y_true, y_pred)
     fig, ax = plt.subplots()
@@ -40,6 +62,20 @@ def plot_roc_curve(y_true, y_scores, estimator_name=None, title=None):
     return fig
 
 def plot_precision_recall_curve(y_true, y_scores, estimator_name=None, title=None):
+    # precision, recall, thresholds = precision_recall_curve(y_true, y_scores)
+    # precision, recall = precision[:-1], recall[:-1]
+    # f1_scores = 2 * (precision * recall) / (precision + recall + 1e-8)
+
+    # fig, ax = plt.subplots()
+    # ax.plot(thresholds, f1_scores, label="F1 Score")
+    # ax.set_xlabel("Decision Threshold")
+    # ax.set_ylabel("F1 Score")
+    # ax.set_ylim(0, 1.05)
+    # ax.set_title(title or f"F1 Score Curve ({estimator_name})")
+    # ax.legend()
+    # plt.tight_layout()
+    # return fig
+ 
     ap = average_precision_score(y_true, y_scores)
     precision, recall, _ = precision_recall_curve(y_true, y_scores)
     fig, ax = plt.subplots()
@@ -50,54 +86,19 @@ def plot_precision_recall_curve(y_true, y_scores, estimator_name=None, title=Non
     plt.show()
     return fig
 
-
-def plot_predicted_vs_actual(y_true, y_pred, title="Predicted vs Actual"):
-    """
-    실제값과 예측값을 비교하는 산점도 그래프를 출력합니다.
-    예측값이 정확할수록 점들이 대각선(45도 기준선)을 따라 분포하게 됩니다.
-
-    Parameters:
-    - y_true: 실제 값 배열
-    - y_pred: 예측 값 배열
-    - title: 그래프 제목
-
-    Returns:
-    - fig: matplotlib figure 객체 (streamlit에서 사용 가능)
-    """
+def plot_scatter_comparison(x, y, baseline=None, xlabel="X", ylabel="Y", title="Scatter Plot"):
     fig, ax = plt.subplots()
-    ax.scatter(y_true, y_pred, alpha=0.6)
-    ax.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], 'r--')  # 45도 기준선
-    ax.set_xlabel("Actual")
-    ax.set_ylabel("Predicted")
+    ax.scatter(x, y, alpha=0.6)
+    if baseline == "identity":
+        ax.plot([min(x), max(x)], [min(x), max(x)], 'r--')  # 45도 대각선
+    elif baseline == "zero":
+        ax.axhline(0, color='red', linestyle='--')  # y=0 기준선
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
     ax.set_title(title)
     plt.tight_layout()
-    plt.show()
     return fig
 
-def plot_residuals(y_true, y_pred, title="Residual Plot"):
-    """
-    잔차(residual = 실제값 - 예측값)를 시각화하여 
-    예측 모델이 편향(bias)되어 있는지 확인합니다.
-    이상적으로는 잔차들이 0을 중심으로 고르게 분포해야 합니다.
-
-    Parameters:
-    - y_true: 실제 값 배열
-    - y_pred: 예측 값 배열
-    - title: 그래프 제목
-
-    Returns:
-    - fig: matplotlib figure 객체
-    """
-    residuals = y_true - y_pred
-    fig, ax = plt.subplots()
-    ax.scatter(y_pred, residuals, alpha=0.6)
-    ax.axhline(0, color='red', linestyle='--')  # 기준선
-    ax.set_xlabel("Predicted")
-    ax.set_ylabel("Residuals")
-    ax.set_title(title)
-    plt.tight_layout()
-    plt.show()
-    return fig
 
 def plot_prediction_histogram(y_true, y_pred, title="Prediction Distribution"):
     """

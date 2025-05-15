@@ -1,10 +1,11 @@
-
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay, accuracy_score
 import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 import time
+from util.visualizer import plot_confusion_matrix, plot_model_performance_comparison
+from util.model_io import save_models
 
 # 분류 모델 import
 from sklearn.tree import DecisionTreeClassifier
@@ -12,6 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
 
 def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_state=42, cv=5, n_jobs=-1):
     """
@@ -38,6 +40,8 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
     # 2. 결과 저장용 변수
     results = []
     best_estimators = {}
+    # 2-1. 모델을 저장할 딕셔너리
+    model_bundle = {}
 
     # 3. 각 모델별 그리드 서치 수행
     for model_name in base_models:
@@ -69,10 +73,28 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
             'Train Accuracy (CV)': grid_search.best_score_,
             'Test Accuracy': accuracy
         })
+
+        ## 모델 저장 구조 생성(pkl)
+        model_bundle[model_name] = {
+            "model": grid_search.best_estimator_,
+            "metrics": {
+                "best_params": grid_search.best_params_,
+                "cv_score": grid_search.best_score_,
+                "test_accuracy": accuracy,
+                "classification_report": classification_report(y_test, y_pred, output_dict=True),
+                "confusion_matrix": confusion_matrix(y_test, y_pred),
+                "X_test": X_test,  # ✅ 추가
+                "y_test": y_test   # ✅ 추가
+            }
+        }
+
         e = time.time()
         tun_time = e-s
         print(f"- Complete:{tun_time:.5f}초")
     
+    # 3-1. 모델 저장
+    save_models(model_bundle, path="../model/all_models.pkl")
+
     # 4. 결과 DataFrame 생성
     results_df = pd.DataFrame(results)
     results_df = results_df.sort_values(by='Test Accuracy', ascending=False)
@@ -80,32 +102,15 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
     print(results_df.to_string(index=False))
 
     # 5. 시각화
-    plt.figure(figsize=(10, 6))
-    bars = plt.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
-    plt.xlabel('Accuracy')
-    plt.title('Model Performance Comparison')
-    plt.xlim(0, 1.0)
-
-    # 정확도 값 표시
-    for bar in bars:
-        width = bar.get_width()
-        plt.text(width + 0.01, bar.get_y() + bar.get_height()/2, f'{width:.3f}', 
-                ha='left', va='center')
-
-    plt.tight_layout()
-    plt.show()
+    plot_model_performance_comparison(results_df)
 
     # 6. 성능 리포트 출력
     for model_name, estimator in best_estimators.items():
         print(f"\n {model_name} Best Model Report")
         y_pred = estimator.predict(X_test)
-        print(classification_report(y_test, y_pred))
+        print(classification_report(y_test, y_pred, digits=5))
 
-        # # 혼동 행렬 시각화
-        # cm = confusion_matrix(y_test, y_pred)
-        # disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=estimator.classes_)
-        # disp.plot(cmap='Blues')
-        # plt.title(f'Confusion Matrix - {model_name}')
-        # plt.show()
-
+        # 혼동 행렬 시각화
+        plot_confusion_matrix(y_test, y_pred, title=model_name)
+        
     return results_df, best_estimators
