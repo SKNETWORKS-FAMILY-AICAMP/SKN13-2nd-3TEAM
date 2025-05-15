@@ -19,7 +19,7 @@ __version__ = 1.1
 
 def plot_model_performance_comparison(results_df, figsize=(10, 6)):
     fig, ax = plt.subplots(figsize=figsize)
-    bars = ax.barh(results_df['Model'], results_df['Accuracy'], color='skyblue')
+    bars = ax.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
     ax.set_xlabel('Test Accuracy')
     ax.set_title('Model Performance Comparison')
     ax.set_xlim(0, 1.0)
