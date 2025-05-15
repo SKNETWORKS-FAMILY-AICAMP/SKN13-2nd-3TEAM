@@ -1,4 +1,3 @@
-
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay, accuracy_score
@@ -12,6 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
 
 def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_state=42, cv=5, n_jobs=-1):
     """
@@ -101,11 +101,11 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
         y_pred = estimator.predict(X_test)
         print(classification_report(y_test, y_pred))
 
-        # # 혼동 행렬 시각화
-        # cm = confusion_matrix(y_test, y_pred)
-        # disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=estimator.classes_)
-        # disp.plot(cmap='Blues')
-        # plt.title(f'Confusion Matrix - {model_name}')
-        # plt.show()
+        # 혼동 행렬 시각화
+        cm = confusion_matrix(y_test, y_pred)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=estimator.classes_)
+        disp.plot(cmap='Blues')
+        plt.title(f'Confusion Matrix - {model_name}')
+        plt.show()
 
     return results_df, best_estimators
