@@ -53,7 +53,7 @@ if selected_model == "모델을 선택해주세요":
 
     # 📈 시각화 출력
     st.markdown("#### 📉 Accuracy 기반 성능 비교 (수평 막대 차트)")
-    fig = plot_model_performance_comparison(results_df[["Model", "Test Accuracy"]])
+    fig = plot_model_performance_comparison(results_df)
     st.pyplot(fig)
 
     st.caption("🔍 왼쪽에서 모델을 선택하면, 아래에 해당 모델의 성능 평가 그래프가 표시됩니다.")
