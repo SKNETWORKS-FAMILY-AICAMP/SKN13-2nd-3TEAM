@@ -18,6 +18,10 @@ __version__ = 1.1
 ######################################
 
 def plot_model_performance_comparison(results_df, figsize=(10, 6)):
+    """
+    모델 성능 비교 히트맵을 생성하고 fig 객체를 반환합니다.
+    """
+
     fig, ax = plt.subplots(figsize=figsize)
     bars = ax.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
     ax.set_xlabel('Test Accuracy')

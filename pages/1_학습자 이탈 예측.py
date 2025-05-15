@@ -68,7 +68,7 @@ if submitted:
     X_test = model_info["metrics"]["X_test"]
 
     cat_columns = ['code_module', 'code_presentation', 'gender', 'region', 'highest_education',
-                'imd_band', 'age_band', 'num_of_prev_attempts', 'disability', 'is_dropout']
+                'imd_band', 'age_band', 'num_of_prev_attempts', 'disability']
     num_columns = ['studied_credits', 'date_registration', 'date_unregistration', 'sum_click', 'avg_score']
 
 
@@ -132,8 +132,7 @@ if submitted:
         "disability": disability,
         'code_module': "AAA",
         'code_presentation': "2013J",
-        "num_of_prev_attempts": "0", 
-        "is_dropout": "0"
+        "num_of_prev_attempts": "0"
     }])
 
     # 문자열 표준화 + 매핑 적용
@@ -154,8 +153,7 @@ if submitted:
         'imd_band': 'float64',
         'age_band': 'int64',
         'num_of_prev_attempts': 'int64',
-        'disability': 'object',
-        'is_dropout': 'int64'
+        'disability': 'object'
     })
 
 

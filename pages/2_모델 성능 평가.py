@@ -39,21 +39,21 @@ if selected_model == "모델을 선택해주세요":
         m = info['metrics']
         metrics_data.append({
             "Model": model_name,
-            "Accuracy": m["test_accuracy"],
+            "Test Accuracy": m["test_accuracy"],
             "Precision": m["classification_report"]["1"]["precision"],
             "Recall": m["classification_report"]["1"]["recall"],
             "F1-score": m["classification_report"]["1"]["f1-score"],
             "ROC-AUC": m.get("roc_auc", np.nan)
         })
 
-    results_df = pd.DataFrame(metrics_data).sort_values(by="Accuracy", ascending=False)
+    results_df = pd.DataFrame(metrics_data).sort_values(by="Test Accuracy", ascending=False)
 
     # 📋 표 형태 출력
     st.dataframe(results_df, use_container_width=True)
 
     # 📈 시각화 출력
     st.markdown("#### 📉 Accuracy 기반 성능 비교 (수평 막대 차트)")
-    fig = plot_model_performance_comparison(results_df[["Model", "Accuracy"]])
+    fig = plot_model_performance_comparison(results_df[["Model", "Test Accuracy"]])
     st.pyplot(fig)
 
     st.caption("🔍 왼쪽에서 모델을 선택하면, 아래에 해당 모델의 성능 평가 그래프가 표시됩니다.")
