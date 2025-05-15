@@ -9,7 +9,8 @@ from util.visualizer import (
     plot_confusion_matrix,
     plot_roc_curve,
     plot_precision_recall_curve,
-    plot_model_performance_comparison
+    plot_model_performance_comparison,
+    plot_prediction_histogram
 )
 
 # ------------------ 경로 설정 ------------------
@@ -68,17 +69,29 @@ else:
     y_pred = model.predict(metrics["X_test"])
     y_proba = model.predict_proba(metrics["X_test"])[:, 1]
 
-    col1, col2 = st.columns(2)
+    # 상단: Confusion Matrix (좌) + ROC Curve (우)
+    top1, top2 = st.columns([1, 1])
 
-    with col1:
+    with top1:
         fig1 = plot_confusion_matrix(y_test, y_pred, title=f"Confusion Matrix - {selected_model}")
-        st.pyplot(fig1)
+        st.pyplot(fig1, use_container_width=True)
 
-    with col2:
-        fig2 = plot_roc_curve(y_test, y_proba, estimator_name=selected_model, title="ROC Curve")
-        st.pyplot(fig2)
+    with top2:
+        if y_proba is not None:
+            fig2 = plot_roc_curve(y_test, y_proba, estimator_name=selected_model, title="ROC Curve")
+            st.pyplot(fig2, use_container_width=True)
+        else:
+            st.warning("⚠ ROC Curve 미지원")
 
-        fig3 = plot_precision_recall_curve(y_test, y_proba, estimator_name=selected_model, title="Precision-Recall Curve")
-        st.pyplot(fig3)
+    # 하단: PR Curve + F1 Curve
+    bottom1, bottom2 = st.columns([1, 1])
 
-    st.caption("※ 위 결과는 선택한 모델의 테스트셋 성능에 기반합니다.")
+    with bottom1:
+            fig3 = plot_precision_recall_curve(y_test, y_proba, estimator_name=selected_model, title="Precision-Recall Curve")
+            st.pyplot(fig3, use_container_width=True)
+
+    with bottom2:
+            st.markdown("### 📊 Prediction Distribution")
+            fig5 = plot_prediction_histogram(y_test, y_pred)
+            st.pyplot(fig5, use_container_width=True)
+
