@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 import time
 from util.visualizer import plot_confusion_matrix, plot_model_performance_comparison
+from util.model_io import save_models
 
 # 분류 모델 import
 from sklearn.tree import DecisionTreeClassifier
@@ -39,6 +40,8 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
     # 2. 결과 저장용 변수
     results = []
     best_estimators = {}
+    # 2-1. 모델을 저장할 딕셔너리
+    model_bundle = {}
 
     # 3. 각 모델별 그리드 서치 수행
     for model_name in base_models:
@@ -70,10 +73,28 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
             'Train Accuracy (CV)': grid_search.best_score_,
             'Test Accuracy': accuracy
         })
+
+        ## 모델 저장 구조 생성(pkl)
+        model_bundle[model_name] = {
+            "model": grid_search.best_estimator_,
+            "metrics": {
+                "best_params": grid_search.best_params_,
+                "cv_score": grid_search.best_score_,
+                "test_accuracy": accuracy,
+                "classification_report": classification_report(y_test, y_pred, output_dict=True),
+                "confusion_matrix": confusion_matrix(y_test, y_pred),
+                "X_test": X_test,  # ✅ 추가
+                "y_test": y_test   # ✅ 추가
+            }
+        }
+
         e = time.time()
         tun_time = e-s
         print(f"- Complete:{tun_time:.5f}초")
     
+    # 3-1. 모델 저장
+    save_models(model_bundle, path="../model/all_models.pkl")
+
     # 4. 결과 DataFrame 생성
     results_df = pd.DataFrame(results)
     results_df = results_df.sort_values(by='Test Accuracy', ascending=False)
