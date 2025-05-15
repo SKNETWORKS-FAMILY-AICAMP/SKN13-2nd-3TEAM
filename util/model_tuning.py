@@ -108,7 +108,7 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
     for model_name, estimator in best_estimators.items():
         print(f"\n {model_name} Best Model Report")
         y_pred = estimator.predict(X_test)
-        print(classification_report(y_test, y_pred))
+        print(classification_report(y_test, y_pred, digits=5))
 
         # 혼동 행렬 시각화
         plot_confusion_matrix(y_test, y_pred, title=model_name)
