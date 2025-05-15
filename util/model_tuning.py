@@ -101,11 +101,11 @@ def auto_model_tuning(base_models, param_grids, X, y, test_size=0.2, random_stat
         y_pred = estimator.predict(X_test)
         print(classification_report(y_test, y_pred))
 
-        # # 혼동 행렬 시각화
-        # cm = confusion_matrix(y_test, y_pred)
-        # disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=estimator.classes_)
-        # disp.plot(cmap='Blues')
-        # plt.title(f'Confusion Matrix - {model_name}')
-        # plt.show()
-
+        # 혼동 행렬 시각화
+        cm = confusion_matrix(y_test, y_pred)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=estimator.classes_)
+        disp.plot(cmap='Blues')
+        plt.title(f'Confusion Matrix - {model_name}')
+        plt.show()
+        
     return results_df, best_estimators
