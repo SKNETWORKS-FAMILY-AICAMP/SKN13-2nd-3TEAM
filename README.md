@@ -146,7 +146,7 @@ merged_df = merged_df[~condition]
 
 - `date_unregistration`: 수강 취소 여부만 나타내는 컬럼이므로, 결측값은 **취소되지 않음**을 의미하는 `9999`로 대체
     
->💡**`9999` 로 대체한 이유** <br>
+>💡**9999 로 대체한 이유** <br>
 > 본 컬럼은 일정한 기간(ex. 30일)에 관한 데이터이므로, 수강이 아예 취소되지 않음을 표현하기 위해 어떤 날짜 데이터에서도 나올 수 없는 “의미없는 큰 값”인 `9999`을 사용
     
 - `imd_band` (지역 사회 경제 지수): 범주형 변수로 **최빈값**으로 대체
@@ -264,3 +264,103 @@ imd_order = {
 
 ![image.png](img/age_band.png)
 
+# 3. 인공지능 학습 결과서 
+## 📊 1. 사용한 예측 모델
+| 모델 종류                               | 설명                               |
+| ----------------------------------- | -------------------------------- |
+| 🌳 **Decision Tree**                | 트리 구조를 기반으로 한 직관적인 분류 모델         |
+| 🌲 **Random Forest (RF)**           | 여러 개의 트리를 결합한 앙상블 모델             |
+| 📍 **K-Nearest Neighbors (KNN)**    | 인접한 이웃을 기준으로 예측                  |
+| 🧭 **Support Vector Machine (SVM)** | 고차원에서 마진을 최대화하는 분류기              |
+| 🚀 **XGBoost**                      | 빠르고 성능 좋은 그래디언트 부스팅 모델           |
+| 🐱 **CatBoost**                     | 범주형 데이터에 강한 gradient boosting 모델 |
+| ⚡ **AdaBoost**                      | 잘못 분류된 데이터에 가중치를 부여하는 boosting   |
+| 🧠 **Naive Bayes**                  | 확률 기반의 단순하고 빠른 모델                |
+| 📈 **Logistic Regression**          | 확률 기반의 선형 분류 모델                  |
+| 🔄 **SGD**                          | 확률적 경사 하강법 기반 선형 모델              |
+| 🌕 **LightGBM**                     | 대용량 데이터에 효율적인 gradient boosting  |
+
+#### 📊 1-2. 모델 성능 비교
+| 📌 지표 기준         | 설명                                                 |
+|----------------------|------------------------------------------------------|
+| ✅ **Accuracy**       | 전체 분류 정확도 (모든 예측 중 정답 비율)                  |
+| 🎯 **Recall**        | 실제 이탈자를 얼마나 잘 잡았는가 (FN ↓)                    |
+| ⚠️ **Precision**     | 예측된 이탈자 중 실제로 이탈한 비율                        |
+| 🔁 **F1-score**       | Precision과 Recall의 조화 평균. 두 지표 간 **균형**을 평가할 때 사용 |
+
+![image.png](img/per_com1.png)
+![image.png](img/per_com2.png)
+
+### 🏆 2. 최종 모델 선정
+#### 🎯 2-1. 기준 설정: Recall 우선
+- ❗ FN(실제 이탈인데 예측 실패) → 교육적 손실이 크기 때문에 Recall이 중요한 지표
+- 예: 조기 경고 시스템에서는 가능한 많은 위험 학생을 선별해야 함
+- FP(잘못된 경고)는 지원만 낭비되지만, FN은 기회 자체를 잃음
+
+#### 🔍 2-2. 최종 선택 모델
+⇒  Recall 뿐 아니라 전체적으로 성능이 좋은 세 모델에 대해 하이퍼파라미터 튜닝 진행
+| 모델                   | 특성                |
+| -------------------- | -------------------- |
+| 🧠 **MLPClassifier** | 다층 퍼셉트론 기반 신경망 모델    |
+| 🐱 **CatBoost**      | 범주형 변수 자동 처리 + 높은 성능 |
+| 🚀 **XGBoost**       | 튜닝에 강하고 예측 성능 우수     |
+
+#### 🛠 1-3-3. 하이퍼파라미터 (Best Parameters)
+<details> <summary>📌 MLPClassifier</summary>
+python
+코드 복사
+{
+    'max_iter': 1000,
+    'hidden_layer_sizes': (50, 30),
+    'activation': 'tanh',
+    'alpha': 0.001,
+    'learning_rate_init': 0.001,
+    'batch_size': 64
+}
+</details> <details> <summary>🐱 CatBoost</summary>
+python
+코드 복사
+{
+    'iterations': 500,
+    'depth': 4,
+    'learning_rate': 0.05,
+    'l2_leaf_reg': 4
+}
+</details> <details> <summary>🚀 XGBoost</summary>
+python
+코드 복사
+{
+    'n_estimators': 1000,
+    'learning_rate': 0.01,
+    'max_depth': 6
+}
+</details>
+
+### 📈 3. 최종 성능 결과
+🚀 **XGBoost 결과**
+| Confusion Matrix                   | ROC Curve                                                 |
+| -------------------- | --------------------------------------------------------------- |
+| ![image.png](img/xg_mat.png)      |  ![image.png](img/xg_roc.png)                              |
+
+🐱 **CatBoost 결과**
+| Confusion Matrix                   | ROC Curve                                                 |
+| -------------------- | --------------------------------------------------------------- |
+|![image.png](img/cat_mat.png)     | ![image.png](img/cat_roc.png)                          |
+
+🧠 **MLPClassifier 결과**
+| Confusion Matrix                   | ROC Curve                                                 |
+| -------------------- | --------------------------------------------------------------- |
+|![image.png](img/mlp_mat.png)  | ![image.png](img/mlp_roc.png)
+                       |
+#### 🌟 3-1. Feature Importance
+| 모델                   | 중요 변수 시각화                                                       |
+| -------------------- | --------------------------------------------------------------- |
+| 🚀 **XGBoost**       | 📷 변수 중요도 그래프                                                   |
+| 🐱 **CatBoost**      | 📷 변수 중요도 그래프                                                   |
+| 🧠 **MLPClassifier** | (Feature importance 직접 제공 안 됨 – permutation importance 등 대안 가능) |
+
+# 4. 한 줄 회고
+> 📌 **강지윤**: <br>
+> 📌 **구재회**: <br>
+> 📌 **김지민**: 다들 각자 맡은 일 잘해주셔서 재밌는 프로젝트 진행한거 같고 다양한 모델과 협업기능 등 많은걸 배워서 좋았습니다 !!  (이제 핫팩 ♨️노트북♨️ 탈출 🏃💨)<br>
+> 📌 **지형우**:
