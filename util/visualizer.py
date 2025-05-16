@@ -11,11 +11,58 @@ from sklearn.metrics import (
     RocCurveDisplay, roc_auc_score, roc_curve, mean_squared_error, mean_absolute_error, r2_score
 )
 
-__version__ = 1.1
+__version__ = 1.2
 
 ######################################
 # 📊 모델 평가 지표 시각화 함수
 ######################################
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+def plot_feature_importance(model, feature_names, top_n=10):
+    """
+    다양한 모델(RandomForest, XGBoost, LightGBM, CatBoost, LogisticRegression 등)의
+    Feature Importance 또는 Coefficient를 시각화합니다.
+
+    Parameters:
+    - model: 학습된 모델 객체
+    - feature_names: 특성 이름 리스트
+    - top_n: 상위 몇 개의 특성을 시각화할지 (기본 10)
+
+    Returns:
+    - fig: matplotlib.figure.Figure 객체
+    """
+    model_name = model.__class__.__name__
+
+    # 중요도 가져오기
+    if hasattr(model, "feature_importances_"):
+        importances = model.feature_importances_
+    elif hasattr(model, "coef_"):
+        importances = model.coef_.flatten()  # 계수도 가능
+        importances = np.abs(importances)    # 계수는 부호가 있으므로 절댓값 처리
+    else:
+        print(f"⚠️ {model_name}: feature importance 또는 계수(coef_)를 지원하지 않습니다.")
+        return None
+
+    # 시리즈 생성 및 상위 top_n 선택
+    importance_series = pd.Series(importances, index=feature_names).sort_values(ascending=False)
+    top_features = importance_series.head(top_n)
+
+    # 시각화
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = plt.cm.viridis(np.linspace(0, 1, top_n))
+    top_features[::-1].plot(kind='barh', color=colors, ax=ax)
+
+    ax.set_title(f"Top {top_n} Feature Importances", fontsize=14, fontweight='bold')
+    ax.set_xlabel("Importance Score", fontsize=12)
+    ax.set_ylabel("Feature", fontsize=12)
+    ax.set_xlim(0, top_features.max() * 1.1)
+    plt.tight_layout()
+
+    return fig
+
 
 def plot_model_performance_comparison(results_df, figsize=(10, 6), cmap="inferno"):
     """

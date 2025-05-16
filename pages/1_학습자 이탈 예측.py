@@ -4,6 +4,10 @@ import plotly.graph_objects as go
 import pickle
 import os
 from util.model_io import load_models
+from util.visualizer import plot_feature_importance
+from scipy.sparse import issparse
+
+
 
 # ------------------ 경로 설정 ------------------
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -82,19 +86,6 @@ if submitted:
     base_df = pd.read_csv("data/final_dataset.csv")
     X_base = base_df.drop(columns="target")
 
-    # 4. 새로운 입력 데이터 예시 (범주형만 입력)
-    # new_input = pd.DataFrame([{
-    #     'gender': "F",
-    #     'region': "North Western Region",
-    #     "highest_education": "2",
-    #     "imd_band": "4.0",
-    #     "age_band": "45",
-    #     "disability": "Y", 
-    #     'code_module': "AAA",
-    #     'code_presentation': "2013J",
-    #     "num_of_prev_attempts": "0", 
-    #     "is_dropout": "1"
-    # }], dtype=object)
 
     imd_order = {
         "0-10%": 1,
@@ -130,8 +121,8 @@ if submitted:
         "imd_band": imd_band,
         "age_band": age_band,
         "disability": disability,
-        'code_module': "AAA",
-        'code_presentation': "2013J",
+        'code_module': "BBB",
+        'code_presentation': "2014J",
         "num_of_prev_attempts": "0"
     }])
 
@@ -142,8 +133,6 @@ if submitted:
 
 
     # ✅ 입력값을 DataFrame 형태로 생성
-
-
     new_input = new_input.astype({
         'code_module': 'object',
         'code_presentation': 'object',
@@ -180,7 +169,9 @@ if submitted:
     # 8. 전처리 후 예측
     fe_transformer.fit(X_base)  # DataFrame 그대로
     X_transformed = fe_transformer.transform(new_complete_input)
-
+    if issparse(X_transformed):
+        X_transformed = X_transformed.toarray()
+    
     # 예측
     prediction = model.predict(X_transformed)
     print("✅ 예측 결과:", prediction)
@@ -200,26 +191,9 @@ if submitted:
     print(f"🔥 이탈률 (확률): {dropout_prob:.4f}")
 
 
-
-
-    # # 컬럼 순서를 학습 데이터 기준으로 맞추기
-    # try:
-    #     input_data = input_data.reindex(columns=X_test.columns)
-    # except Exception as e:
-    #     st.error(f"❌ 입력 데이터 정렬 실패: {e}")
-    #     st.stop()
-
-    # # ✅ 예측 실행
-    # try:
-    #     y_pred = model.predict(input_data)[0]
-    #     y_proba = model.predict_proba(input_data)[0][1]
-    # except Exception as e:
-    #     st.error(f"❌ 예측 실패: {e}")
-    #     st.stop()
-
     # ✅ 결과 출력
-    st.subheader("📋 입력 요약")
-    st.dataframe(new_input)
+    # st.subheader("📋 입력 요약")
+    # st.dataframe(new_input)
 
     st.subheader("📈 예측 결과")
     st.success(f"✅ 예측 결과: **{'이탈' if pred_class[0] == 1 else '유지'}**")
@@ -244,5 +218,14 @@ if submitted:
     ))
 
     st.plotly_chart(gauge_fig, use_container_width=True)
+
+    # 피처 이름 가져오기
+    feature_names = fe_transformer.get_feature_names_out()
+    # 모델 feature importance 시각화
+    fig = plot_feature_importance(model, feature_names, top_n=10)
+    if fig is not None:
+        st.pyplot(fig, use_container_width=True)
+    else:
+        st.warning(f"⚠️ 해당 모델은 중요도 시각화를 지원하지 않습니다.")
 
     
