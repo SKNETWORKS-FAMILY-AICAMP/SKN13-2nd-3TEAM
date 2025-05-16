@@ -136,9 +136,11 @@ OULAD는 영국의 Open University에서 제공하는 학습 분석 데이터셋
     - 학습자별 평가 점수 평균(avg_score)과 제출률(banked_ratio) 계산
     - score, is_banked 컬럼을 groupby(id_student)로 집계
     - 결측값은 0으로 대체 (시험을 안본 Withdrawn학습자들)
-    - 
+  
 -🔹 결측치 처리
     - sum_click, avg_score : 결측값을 0으로 채움
+
+**병합된 데이터셋**<br> ![image.png](img/data_merge.png)
 
 1️⃣ **이상치 처리**
 
@@ -243,6 +245,7 @@ imd_order = {
 > 즉, **최종 성과가 Fail로 기록된 학습자**는 공식적으로 수료 과정을 마쳤다고 할 수는 있으나, **학업적 성취를 이루지 못하고 프로그램의 목적을 달성하지 못한 상태**이므로, 이는 실질적인 학업적 이탈로 간주<br>
 > Kloft, M., Stiehler, F., Zheng, Z., & Pinkwart, N. (2014). Predicting MOOC dropout over weeks using machine learning methods. In *Proceedings of the EMNLP 2014 workshop on analysis of large scale social interaction in MOOCs* (pp. 60-65).
 
+**전처리 후 데이터셋**<br>![image.png](img/final.png) ![image.png](img/null.png)
 
 ### 2. 데이터 시각화
 
