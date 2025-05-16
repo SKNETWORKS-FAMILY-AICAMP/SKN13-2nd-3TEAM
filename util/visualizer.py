@@ -17,21 +17,40 @@ __version__ = 1.1
 # 📊 모델 평가 지표 시각화 함수
 ######################################
 
-def plot_model_performance_comparison(results_df, figsize=(10, 6)):
-    fig, ax = plt.subplots(figsize=figsize)
-    bars = ax.barh(results_df['Model'], results_df['Test Accuracy'], color='skyblue')
-    ax.set_xlabel('Test Accuracy')
-    ax.set_title('Model Performance Comparison')
-    ax.set_xlim(0, 1.0)
+def plot_model_performance_comparison(results_df, figsize=(10, 6), cmap="inferno"):
+    """
+    모델 성능 비교 heatmap 시각화 함수
 
-    # 정확도 값 표시
-    for bar in bars:
-        width = bar.get_width()
-        ax.text(width + 0.01, bar.get_y() + bar.get_height()/2, f'{width:.3f}', 
-                ha='left', va='center')
+    Parameters:
+    - df: DataFrame (Model 컬럼 포함, 나머지는 수치 성능 지표)
+    - figsize: figure 크기
+    - cmap: heatmap 컬러맵
+
+    Returns:
+    - fig: matplotlib figure 객체
+    """
+    # Model 컬럼을 인덱스로 설정
+    heatmap_data = results_df.set_index("Model").select_dtypes(include=["number"])
+
+    # 시각화
+    fig, ax = plt.subplots(figsize=figsize)
+    sns.heatmap(
+        heatmap_data,
+        annot=True,
+        fmt=".3f",
+        cmap=cmap,
+        linewidths=0.5,
+        cbar_kws={'label': 'Score'},
+        ax=ax
+    )
+
+    ax.set_title("Model Performance Comparison", fontsize=16, fontweight='bold')
+    ax.set_xlabel("Metric", fontsize=12)
+    ax.set_ylabel("Model", fontsize=12)
+    ax.tick_params(axis='x', rotation=0)
+    ax.tick_params(axis='y', rotation=0)
 
     plt.tight_layout()
-    plt.show()
     return fig
 
 
