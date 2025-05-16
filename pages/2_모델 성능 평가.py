@@ -40,9 +40,9 @@ if selected_model == "모델을 선택해주세요":
         metrics_data.append({
             "Model": model_name,
             "Test Accuracy": m["test_accuracy"],
-            "Precision": m["classification_report"]["1"]["precision"],
-            "Recall": m["classification_report"]["1"]["recall"],
-            "F1-score": m["classification_report"]["1"]["f1-score"],
+            "Precision": m["classification_report"]["macro avg"]["precision"],
+            "Recall": m["classification_report"]["macro avg"]["recall"],
+            "F1-score": m["classification_report"]["macro avg"]["f1-score"],
             "ROC-AUC": m.get("roc_auc", np.nan)
         })
 
