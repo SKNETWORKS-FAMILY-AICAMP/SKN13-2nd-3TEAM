@@ -293,19 +293,21 @@ imd_order = {
 
 # 4. 인공지능 학습 결과서 
 ### 📊 1. 사용한 예측 모델
-| 모델 종류                               | 설명                               |
-| ----------------------------------- | -------------------------------- |
-| 🌳 **Decision Tree**                | 트리 구조를 기반으로 한 직관적인 분류 모델         |
-| 🌲 **Random Forest (RF)**           | 여러 개의 트리를 결합한 앙상블 모델             |
-| 📍 **K-Nearest Neighbors (KNN)**    | 인접한 이웃을 기준으로 예측                  |
-| 🧭 **Support Vector Machine (SVM)** | 고차원에서 마진을 최대화하는 분류기              |
-| 🚀 **XGBoost**                      | 빠르고 성능 좋은 그래디언트 부스팅 모델           |
-| 🐱 **CatBoost**                     | 범주형 데이터에 강한 gradient boosting 모델 |
-| ⚡ **AdaBoost**                      | 잘못 분류된 데이터에 가중치를 부여하는 boosting   |
-| 🧠 **Naive Bayes**                  | 확률 기반의 단순하고 빠른 모델                |
-| 📈 **Logistic Regression**          | 확률 기반의 선형 분류 모델                  |
-| 🔄 **SGD**                          | 확률적 경사 하강법 기반 선형 모델              |
-| 🌕 **LightGBM**                     | 대용량 데이터에 효율적인 gradient boosting  |
+| 모델 종류                               | 설명                                               |
+| ----------------------------------- | ------------------------------------------------ |
+| 🌳 **Decision Tree**                | 트리 구조를 기반으로 한 직관적인 분류 모델                      |
+| 🌲 **Random Forest (RF)**           | 여러 개의 트리를 결합한 앙상블 모델                            |
+| 📍 **K-Nearest Neighbors (KNN)**    | 인접한 이웃을 기준으로 예측                                 |
+| 🧭 **Support Vector Machine (SVM)** | 고차원에서 마진을 최대화하는 분류기                             |
+| 🚀 **XGBoost**                      | 빠르고 성능 좋은 그래디언트 부스팅 모델                          |
+| 🐱 **CatBoost**                     | 범주형 데이터에 강한 gradient boosting 모델                |
+| ⚡ **AdaBoost**                     | 잘못 분류된 데이터에 가중치를 부여하는 boosting 모델             |
+| 🧠 **Naive Bayes**                  | 확률 기반의 단순하고 빠른 모델                               |
+| 📈 **Logistic Regression**          | 확률 기반의 선형 분류 모델                                 |
+| 🔄 **SGD**                          | 확률적 경사 하강법 기반 선형 모델                             |
+| 🌕 **LightGBM**                     | 대용량 데이터에 효율적인 gradient boosting                  |
+| 🧮 **MLPClassifier**                | 신경망 기반의 다층 퍼셉트론 분류기 (딥러닝 계열, 비선형 복잡도 학습에 강함) |
+
 
 #### 📊 1-2. 모델 성능 비교
 | 📌 지표 기준         | 설명                                                 |
