@@ -8,7 +8,7 @@
 
 ## 🙋🏻 팀명: 묵(Mooc)찌²빠 ✊🏻👉🏻👈🏻🤚🏻
 
-| ![rock](img/rock.png) | ![sr1](img/sr1.png) | ![sr2](img/sr2.png) | ![paper](img/paper.png) |
+| <img src="img/rock.png" width="100" height="120"/>|<img src="img/sr1.png" width="100" height="120" />|<img src="img/sr2.png" width="100"  height="120"/> |<img src="img/paper.png" width="100" height="120"/> |
 |:---------------------:|:------------------:|:------------------:|:------------------------:|
 | 강지윤 | 김지민 | 지형우 | 구재회 |
 | [@jiyun-kang12](https://github.com/jiyun-kang12)  | [@Gogimin](https://github.com/Gogimin) | [@JI0617](https://github.com/JI0617) | [@jaehoi-koo](https://github.com/jaehoi-koo) |
