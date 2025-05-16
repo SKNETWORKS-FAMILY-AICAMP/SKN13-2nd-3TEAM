@@ -1,6 +1,7 @@
 # SKN13-2nd-3Team
 
 ---
+🗓️ **기간**: 2025.05.14 ~ 2025.05.16
 
 # 0. 팀 소개
 
@@ -66,7 +67,9 @@ MOOC (Massive Open Online Course)는 인터넷을 통해 누구나 자유롭게 
 
 ![image.png](img/streamlit.png)
 
-**📊 데이터 수집 및 선정**
+
+# 2. 📊 데이터 수집 및 선정
+---
 
 1. **데이터 개요**
 
@@ -112,11 +115,30 @@ OULAD는 영국의 Open University에서 제공하는 학습 분석 데이터셋
 | `avg_score` | score : 해당 평가에서 학습자가 받은 점수의 평균 (0점에서 100점 사이) ; **40점 미만은 Fail(낙제)**로 간주됨 | **수치형** |
 | `final_result` (target) | 해당 모듈-프레젠테이션에서의 학습자의 최종 결과(Pass, Faill, Withdrawn, Distinction) | **범주형** |
 
-# 2. 탐색적 데이터 분석(EDA)
+# 3. 탐색적 데이터 분석(EDA)
 
 ---
 
 ### 1. 데이터 전처리🧹
+
+🧩 **데이터 병합**
+
+- 🔹 기준 테이블: studentInfo(학습자 정보)
+- 🔹 studentRegistration 병합
+    - 등록일(date_registration)과 수강 취소일(date_unregistration) 정보 추가
+    - 병합 키: id_student, code_module, code_presentation
+    
+- 🔹 studentVle 병합
+    - 온라인 학습 활동량(sum_click)을 학습자 단위로 집계 (sum)
+    - 병합 후 결측값은 0으로 대체
+
+- 🔹 studentAssessment 병합
+    - 학습자별 평가 점수 평균(avg_score)과 제출률(banked_ratio) 계산
+    - score, is_banked 컬럼을 groupby(id_student)로 집계
+    - 결측값은 0으로 대체 (시험을 안본 Withdrawn학습자들)
+    - 
+-🔹 결측치 처리
+    - sum_click, avg_score : 결측값을 0으로 채움
 
 1️⃣ **이상치 처리**
 
@@ -242,7 +264,8 @@ imd_order = {
 
 **✔️수강 강의 회차(Code Presentation)별 이탈률**
 
-두개의 년도를 비교해보면 1학기(=B) 이탈률이 2학기(=J) 이탈률보다 높은 것으로 나타났음. 반면, 실제 강의를 듣는 학습자 수는 하반기(=J)에 더 많은 것으로 보이며, **실제적으로 하반기 학습자들이 강의도 많이 수강하면서 이탈률은 상반기에 비해 낮은 것으로 나타남.**
+두개의 년도를 비교해보면 1학기(=B) 이탈률이 2학기(=J) 이탈률보다 높은 것으로 나타났음. 반면, 실제 강의를 듣는 학습자 수는 하반기(=J)에 더 많은 것으로 보이며, **실제적으로 하반기 학습자들이 강의도 많이 수강하면서 이탈률은 상반기에 비해 낮은 것으로 나타남.**<br>
+> 💡 **하반기 수강자들의 이탈률이 더 낮다!** <br>
 
 ![image.png](img/code_present.png)
 
@@ -254,7 +277,8 @@ imd_order = {
 
 **✔️학습자가 거주한 지역의 복합 빈곤 지수별 이탈률**
 
-지역 복합 빈곤 지수별 이탈률을 비교한 결과, 빈곤 지수가 낮을수록 이탈률은 높아지는 경향을 보이는 것으로 나타남. 한편, 3수준(53.37%)에 해당되는 학습자 수(4759명)가 가장 많기 때문에, 실제 이탈률 수는 1수준과 2수준과 거의 비슷한 수준인 것을 알 수 있음.
+지역 복합 빈곤 지수별 이탈률을 비교한 결과, 빈곤 지수가 낮을수록 이탈률은 높아지는 경향을 보이는 것으로 나타남. 한편, 3수준(53.37%)에 해당되는 학습자 수(4759명)가 가장 많기 때문에, 실제 이탈률 수는 1수준과 2수준과 거의 비슷한 수준인 것을 알 수 있음.<br>
+> 💡**빈곤 지수가 낮을수록 이탈률이 높다! (Mooc강의는 무료 강의가 더 높아서 빈곤 지수가 높을수록 학습 기회를 놓지 않으려고 했을 것으로 해석될 수 있음)** <br>
 
 ![image.png](img/imd_band.png)
 
@@ -264,8 +288,8 @@ imd_order = {
 
 ![image.png](img/age_band.png)
 
-# 3. 인공지능 학습 결과서 
-## 📊 1. 사용한 예측 모델
+# 4. 인공지능 학습 결과서 
+### 📊 1. 사용한 예측 모델
 | 모델 종류                               | 설명                               |
 | ----------------------------------- | -------------------------------- |
 | 🌳 **Decision Tree**                | 트리 구조를 기반으로 한 직관적인 분류 모델         |
@@ -306,9 +330,8 @@ imd_order = {
 | 🚀 **XGBoost**       | 튜닝에 강하고 예측 성능 우수     |
 
 #### 🛠 1-3-3. 하이퍼파라미터 (Best Parameters)
-<details> <summary>📌 MLPClassifier</summary>
-python
-코드 복사
+📌 MLPClassifier
+```
 {
     'max_iter': 1000,
     'hidden_layer_sizes': (50, 30),
@@ -317,24 +340,25 @@ python
     'learning_rate_init': 0.001,
     'batch_size': 64
 }
-</details> <details> <summary>🐱 CatBoost</summary>
-python
-코드 복사
+```
+🐱 CatBoost
+```
 {
     'iterations': 500,
     'depth': 4,
     'learning_rate': 0.05,
     'l2_leaf_reg': 4
 }
-</details> <details> <summary>🚀 XGBoost</summary>
-python
-코드 복사
+```
+🚀 XGBoost
+```
 {
     'n_estimators': 1000,
     'learning_rate': 0.01,
     'max_depth': 6
 }
-</details>
+```
+
 
 ### 📈 3. 최종 성능 결과
 🚀 **XGBoost 결과**
@@ -355,12 +379,37 @@ python
 #### 🌟 3-1. Feature Importance
 | 모델                   | 중요 변수 시각화                                                       |
 | -------------------- | --------------------------------------------------------------- |
-| 🚀 **XGBoost**       | 📷 변수 중요도 그래프                                                   |
-| 🐱 **CatBoost**      | 📷 변수 중요도 그래프                                                   |
-| 🧠 **MLPClassifier** | (Feature importance 직접 제공 안 됨 – permutation importance 등 대안 가능) |
+| 🚀 **XGBoost**       | ![image.png](img/xg_fl.png)                                            |
+| 🐱 **CatBoost**      | ![image.png](img/cat_fl.png)                                                    |
+| 🧠 **MLPClassifier** | ![image.png](img/mlp_fl.png)      |
 
-# 4. 한 줄 회고
-> 📌 **강지윤**: <br>
-> 📌 **구재회**: <br>
+# 5. Streamlit 화면 구현
+### ✅대시보드 홈 페이지 (메인)
+
+![image.png](img/1.png)
+
+### ✅학습자 이탈 예측 페이지 (메인)
+
+![image.png](img/2.png)
+
+### ✅학습자 이탈 예측 페이지 (예측 후)
+
+![image.png](img/3.png)
+
+![image.png](img/4.png)
+
+### ✅모델 성능 평가 페이지 (메인)
+
+![image.png](img/5.png)
+![image.png](img/6.png)
+
+### ✅모델 성능 평가 페이지 (각 모델 성능 시각화 적용시)
+
+![image.png](img/7.png)
+![image.png](img/8.png)
+
+# 6. 한 줄 회고
+> 📌 **강지윤**: 아직 두번의 프로젝트만 했지만, 모든 교육과정을 통틀어 최고의 팀이 아닐까하는 생각이 듭니다. 특히, 이번 프로젝트는 데이터 전처리나 모델 하이퍼파라미터 조정 등 의사결정을 해야하는 과정이 많았는데 그때마다 다같이 모여서 의견을 나누고 인사이트를 나눌 수 있어서 많은 걸 배울 수 있었습니다! 각자의 역할에 열심히 해주셔서 너무 감사드려요~!   <br>
+> 📌 **구재회**: 지난 프로젝트에 다루지 못해본 streamlit 기능 구현에 대해 많이 공부한 시간이었습니다. 팀원 모두 각자의 역할을 너무 잘 해줘서 잘 마무리 되었다고 생각합니다. 부족한 주인을 만나 고생한 GPT에게도 격려의 말을 전합니다.<br>
 > 📌 **김지민**: 다들 각자 맡은 일 잘해주셔서 재밌는 프로젝트 진행한거 같고 다양한 모델과 협업기능 등 많은걸 배워서 좋았습니다 !!  (이제 핫팩 ♨️노트북♨️ 탈출 🏃💨)<br>
-> 📌 **지형우**:
+> 📌 **지형우**: 벌써 두 번째 프로젝트... 처음보다 내용도 어려워지고 시간도 많이 갈아야했는데, 능력자분들과 함께 해서 성공적으로 마친 것 같아요. 덕분에 힘들어도 즐겁게 노트북 두드렸습니다~!
