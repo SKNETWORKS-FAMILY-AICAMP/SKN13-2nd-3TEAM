@@ -50,8 +50,28 @@ with st.form("dropout_form"):
     # 🔹 모델 선택 추가
     model_names = list(model_bundle.keys())
 
+    # 🔹 모델 이름과 accuracy 정렬
+    sorted_models = sorted(
+        model_bundle.items(),
+        key=lambda item: item[1]["metrics"]["test_accuracy"],  # accuracy 기준 정렬
+        reverse=True
+    )
+
+    # 🔹 이름 가공: 최고 성능 모델에 (Best) 붙이기
+    model_names = []
+    for i, (name, model_info) in enumerate(sorted_models):
+        acc = model_info["metrics"]["test_accuracy"]
+        display_name = f"{name} ({acc:.2%})"
+        if i == 0:
+            display_name += " 🥇 (Best)"
+        model_names.append(display_name)
+
+    # 🔹 Streamlit UI
     st.markdown("### 🔍 예측 모델 선택")
-    selected_model = st.selectbox("사용할 모델", model_names)
+    selected_display = st.selectbox("사용할 모델", model_names)
+
+    # 🔹 실제 모델 이름 추출 (괄호 앞까지 잘라서 원래 이름과 매칭)
+    selected_model = selected_display.split(" (")[0]
 
     submitted = st.form_submit_button("📊 예측하기")
 
